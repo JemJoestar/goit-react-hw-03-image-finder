@@ -1,11 +1,12 @@
-export const PhotoCard = ({ data, handleClick }) => {
+import css from "./ImageFinder.module.css"
+
+export const PhotoCard = ({ photo, onClick }) => {
   return (
-    <li>
-      <img
-        src={data.webformatURL}
-        alt="photo"
-        onClick={(event) => handleClick(event, data.largeImageURL)}
-      />
+    <li
+      onClick={event => onClick({ event, bigImgUrl: photo.largeImageURL })}
+      className={css.photoListItem}
+    >
+      <img src={photo.webformatURL} alt="photo" />
     </li>
   );
 };

@@ -1,3 +1,4 @@
+import css from "./ImageFinder.module.css"
 import { Component } from 'react';
 
 export class SearchBar extends Component {
@@ -10,9 +11,9 @@ export class SearchBar extends Component {
 
   render() {
     return (
-      <header className="searchbar">
+      <header className={css.header}>
         <form
-          className="form"
+          className={css.form}
           onSubmit={event => {
             this.props.onSubmit({
               event,
@@ -21,12 +22,12 @@ export class SearchBar extends Component {
             this.setState({currentRequest: ""});
           }}
         >
-          <button type="submit" className="button">
-            <span className="button-label">Search</span>
+          <button type="submit" className={css.searchBtn}>
+            <span className="button-label">&#128269;</span>
           </button>
 
           <input
-            className="input"
+            className={css.searchBar}
             type="text"
             autoComplete="off"
             autoFocus

@@ -1,12 +1,11 @@
-import css from "./ImageFinder.module.css"
+import css from './ImageFinder.module.css';
+import { PhotoCard } from './PhotoCard';
 
-export const PhotoList = ({ photos }) => {
+export const PhotoList = ({ photos, onClick }) => {
   return (
     <ul className={css.photoList}>
       {photos.map(photo => (
-        <li className={css.photoListItem}key={photo.id}>
-          <img src={photo.webformatURL} alt="photo" />
-        </li>
+        <PhotoCard key={photo.id} photo={photo} onClick={onClick}/>
       ))}
     </ul>
   );

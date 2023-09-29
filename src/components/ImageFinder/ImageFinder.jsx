@@ -2,11 +2,10 @@ import { Component } from 'react';
 import { SearchBar } from './SearchBar';
 import { axiosPixabeyFetch } from 'components/Api/PixabeyApi';
 import { SeeMoreBtn } from './SeeMoreBtn';
-import { PhotoCard } from './PhotoCard';
 import * as basicLightbox from 'basiclightbox';
 import { Modal } from './Modal/Modal';
 import { PhotoList } from './PhotoList';
-import { hasUnreliableEmptyValue } from '@testing-library/user-event/dist/utils';
+import css from "./ImageFinder.module.css"
 
 export class ImageFinder extends Component {
   state = {
@@ -15,10 +14,14 @@ export class ImageFinder extends Component {
     page: 1,
     renderSeeMoreBtn: false,
     totalHits: null,
+    modalControls: null
   };
 
   newRequest = ({ event, searchReq }) => {
     event.preventDefault();
+    if(searchReq === ""){
+      return
+    }
     this.setState({ currentRequest: searchReq });
   };
 
@@ -28,7 +31,6 @@ export class ImageFinder extends Component {
       this.state.page
     );
     this.setState({ totalHits: newData.totalHits });
-    console.log(`newData.totalHits:`, newData.totalHits);
     const newPhotos = newData.hits;
     this.addNewPhotosToState(newPhotos);
   };
@@ -40,10 +42,39 @@ export class ImageFinder extends Component {
     });
   };
 
+  handleClick = ({event, bigImgUrl}) =>{
+    const modal = basicLightbox.create(Modal({bigImgUrl}))
+    this.setState({modalControls: modal})
+    modal.show()
+    document.querySelector(".modal").addEventListener("click", this.closeModalByClick)
+    window.addEventListener("keydown", this.closeModalByEsc)
+  }
+
+  closeModalByClick = (event) =>{
+    if(event.target === event.currentTarget){
+      this.closeModal()
+    }
+  } 
+
+  closeModalByEsc = (event) => {
+    if(event.key === "Escape"){
+      this.closeModal()
+    }
+  }
+
+  closeModal = () => {
+      this.state.modalControls.close()
+      this.setState({modalControls: null})
+      document.querySelector(".modal").removeEventListener("click", this.closeModal)
+      window.removeEventListener("keydown", this.closeModalByEsc)
+  }
+  
+
   componentDidUpdate = (_, prevState) => {
     if (prevState.currentRequest !== this.state.currentRequest) {
-      this.loadPhotos();
+      console.log(12)
       this.setState({ photos: null, page: 1 });
+      this.loadPhotos();
     }
     if (
       this.state.page > 1 &&
@@ -63,13 +94,13 @@ export class ImageFinder extends Component {
     const canRanderPhotos =
       Array.isArray(this.state.photos) && this.state.photos.length !== 0;
     return (
-      <>
+      <div className={css.container}>
         <SearchBar onSubmit={this.newRequest} />
-        {canRanderPhotos && <PhotoList photos={this.state.photos} />}
+        {canRanderPhotos && <PhotoList photos={this.state.photos} onClick={this.handleClick}/>}
         {this.state.renderSeeMoreBtn && (
           <SeeMoreBtn onSeeMore={this.loadPhotos} />
         )}
-      </>
+      </div>
     );
   }
 }
